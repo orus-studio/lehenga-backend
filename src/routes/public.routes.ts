@@ -69,7 +69,7 @@ publicRouter.get("/auth/me", async (request, response) => {
   }
 });
 
-publicRouter.get("/collections", async (request, response) => {
+publicRouter.get("/categories", async (request, response) => {
   try {
     const params = new URLSearchParams();
 
@@ -82,14 +82,14 @@ publicRouter.get("/collections", async (request, response) => {
     }
 
     const query = params.size > 0 ? `?${params.toString()}` : "";
-    const collections = await adminApiRequest(`/public/collections${query}`);
+    const categories = await adminApiRequest(`/public/categories${query}`);
 
     response.json({
       success: true,
-      data: collections,
+      data: categories,
     });
   } catch (error) {
-    sendProxyError(response, error, "Failed to load collections");
+    sendProxyError(response, error, "Failed to load categories");
   }
 });
 
