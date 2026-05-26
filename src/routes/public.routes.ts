@@ -176,3 +176,57 @@ publicRouter.post("/orders", async (request, response) => {
     sendProxyError(response, error, "Failed to create order");
   }
 });
+
+publicRouter.post("/orders/preview", async (request, response) => {
+  try {
+    const headers = getAuthorizationHeader(request.headers.authorization);
+    const preview = await adminApiRequest("/public/orders/preview", {
+      method: "POST",
+      body: request.body,
+      ...(headers ? { headers } : {}),
+    });
+
+    response.json({
+      success: true,
+      data: preview,
+    });
+  } catch (error) {
+    sendProxyError(response, error, "Failed to preview order");
+  }
+});
+
+publicRouter.post("/payments/razorpay/verify", async (request, response) => {
+  try {
+    const headers = getAuthorizationHeader(request.headers.authorization);
+    const order = await adminApiRequest("/public/payments/razorpay/verify", {
+      method: "POST",
+      body: request.body,
+      ...(headers ? { headers } : {}),
+    });
+
+    response.json({
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    sendProxyError(response, error, "Failed to verify payment");
+  }
+});
+
+publicRouter.post("/reviews", async (request, response) => {
+  try {
+    const headers = getAuthorizationHeader(request.headers.authorization);
+    const review = await adminApiRequest("/public/reviews", {
+      method: "POST",
+      body: request.body,
+      ...(headers ? { headers } : {}),
+    });
+
+    response.status(201).json({
+      success: true,
+      data: review,
+    });
+  } catch (error) {
+    sendProxyError(response, error, "Failed to save review");
+  }
+});
