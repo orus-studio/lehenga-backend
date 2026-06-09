@@ -93,9 +93,10 @@ publicRouter.get("/categories", async (request, response) => {
   }
 });
 
-publicRouter.get("/lehengas", async (_request, response) => {
+publicRouter.get("/lehengas", async (request, response) => {
   try {
-    const lehengas = await adminApiRequest("/public/lehengas");
+    const featured = request.query.featured === "true" ? "?featured=true" : "";
+    const lehengas = await adminApiRequest(`/public/lehengas${featured}`);
 
     response.json({
       success: true,
@@ -103,6 +104,25 @@ publicRouter.get("/lehengas", async (_request, response) => {
     });
   } catch (error) {
     sendProxyError(response, error, "Failed to load lehengas");
+  }
+});
+
+publicRouter.get("/availability", async (request, response) => {
+  try {
+    const params = new URLSearchParams();
+
+    for (const key of ["itemType", "productId", "sizeId", "startDate", "endDate"]) {
+      const value = request.query[key];
+      if (typeof value === "string") {
+        params.set(key, value);
+      }
+    }
+
+    const availability = await adminApiRequest(`/public/availability?${params.toString()}`);
+    response.setHeader("Cache-Control", "public, max-age=10, stale-while-revalidate=20");
+    response.json({ success: true, data: availability });
+  } catch (error) {
+    sendProxyError(response, error, "Failed to check availability");
   }
 });
 
