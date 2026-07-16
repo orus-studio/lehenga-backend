@@ -95,8 +95,11 @@ publicRouter.get("/categories", async (request, response) => {
 
 publicRouter.get("/lehengas", async (request, response) => {
   try {
-    const featured = request.query.featured === "true" ? "?featured=true" : "";
-    const lehengas = await adminApiRequest(`/public/lehengas${featured}`);
+    const params = new URLSearchParams();
+    if (request.query.featured === "true") params.set("featured", "true");
+    if (request.query.latest === "true") params.set("latest", "true");
+    const query = params.size ? `?${params.toString()}` : "";
+    const lehengas = await adminApiRequest(`/public/lehengas${query}`);
 
     response.json({
       success: true,
